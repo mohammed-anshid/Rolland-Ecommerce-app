@@ -1,0 +1,114 @@
+<%- include('./layoutes/user-head.ejs'); %>
+<body>
+    <div class="page-wrapper">
+
+        <%- include('./layoutes/user-nav.ejs'); %>
+         
+        
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">checkout</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">success</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav --> 
+
+            <section class="h-100 gradient-custom">
+                <div class="container py-5 h-100">
+                  <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-lg-10 col-xl-8">
+                      
+                      <div class="card" style="border-radius: 0px;">
+                        <div class="card-header px-4 py-5">
+                          <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: #a8729a;"><%=userData.fullname%> </span>!</h5>
+                        </div>
+                       
+                        <div class="card-body p-4">
+                            
+                          <% for( let i = 0; i < order[0].items.length; i++ ) { %>
+                          
+                                                
+                          <div class="card shadow-0 border mb-4">
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="col-md-2">
+                                  <img src="<%=order[0].items[i].productId.productimage[0].image_url%>"
+                                    class="img-fluid" alt="Phone">
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0"><%=order[0].items[i].productId.productname%> </p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small"></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small">Category:<%=order[0].items[i].productId.category%></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small"></p>
+                                </div>
+                                <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                  <p class="text-muted mb-0 small">$<%=order[0].items[i].productId.price%></p>
+                                </div>
+                              </div>
+                              <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                              <div class="row d-flex align-items-center">
+                                <div class="col-md-2">
+                                  <a class="btn btn-outline-primary rounded" href="/orders">view Orders</a>
+                                </div>
+                                <div class="col-md-10">
+                                  
+                                </div>
+                                  
+                              </div>
+                            </div>
+                          </div>
+                         <% } %> 
+              
+                          <div class="d-flex justify-content-between pt-2">
+                            <p class="fw-bold mb-0">Order Details</p>
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">Total :</span><%=order[0].totalAmount%></p>
+                          </div>
+              
+                          <div class="d-flex justify-content-between pt-2">
+                            <p class="text-muted mb-0">Invoice Number : 788152</p>
+                          </div>
+              
+                          <div class="d-flex justify-content-between">
+                            <p class="text-muted mb-0">Invoice Date : 22 Dec,2019</p>
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">GST 18%</span> 123</p>
+                          </div>
+              
+                          <div class="d-flex justify-content-between mb-5">
+                            <p class="text-muted mb-0">Recepits Voucher : 18KU-62IIK</p>
+                            <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+                          </div>
+                        </div>
+                        <div class="card-footer border-0 px-4 py-5"
+                          style=" border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                          <h5 class="d-flex align-items-center justify-content-end text-dark text-uppercase mb-0">Total
+                            paid: <span class="h2 mb-0 ms-2"> <%=order[0].totalAmount%></span></h5>
+                           
+                        </div>
+                      </div>
+                     
+                       
+                    </div>
+                  </div>
+                </div>
+              </section>
+        </main>
+               
+        
+        
+     
+        <!-- start .footer -->
+        <%- include('./layoutes/user-footer.ejs'); %>
+        <!-- End .footer -->
+    </div>
+</body>
+</html>

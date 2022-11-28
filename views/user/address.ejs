@@ -1,0 +1,182 @@
+<%- include('./layoutes/user-head.ejs'); %>
+
+<body>
+    <div class="page-wrapper">
+
+        <!-- start .header -->
+        <%- include('./layoutes/user-nav.ejs'); %>
+        <!-- End .header -->
+
+        <main class="main">
+        	<div class="page-header text-center" style="background-image: url('user/assets/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">My Account<span>Shop</span></h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="dashboard">
+	                <div class="container">
+	                	<div class="row">
+	                		<aside class="col-md-4 col-lg-3">
+	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+								    <li class="nav-item">
+								        <a class="nav-link " href="/account" >Dashboard</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link"  href="/orders">Orders</a>
+								    </li>
+								    
+								    <li class="nav-item">
+								        <a class="nav-link show active"  href="/address" >Adresses</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" href="/profile">Account Details</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" href="/logout">Sign Out</a>
+								    </li>
+								</ul>
+	                		</aside><!-- End .col-lg-3 -->
+
+	                		<div class="col-md-8 col-lg-9">
+	                			<div class="tab-content">
+								    
+
+								    <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+								    	<p>The following addresses will be used on the checkout page by default.</p><a href="/newaddress" class="btn btn-outline-primary-2 mx-auto"><span>Add Adress</span><i class="icon-long-arrow-right"></i></a>
+                                        
+
+								    	<div class="row mt-3">
+											<% if (userAddressData) { %>
+
+												<% for( let i = 0; i < userAddressData.userAddresses.length; i++ ) { %>
+												
+												
+
+												<div class="col-lg-4">
+													<div class="card card-dashboard">
+														<div class="card-body">
+															<h3 class="card-title">Your Address</h3><!-- End .card-title -->
+	
+															<p><%= userAddressData.userAddresses[i].fullName %><br>
+															   <%= userAddressData.userAddresses[i].houseAddress %><br>
+															   <%= userAddressData.userAddresses[i].streetAddress %>,<%= userAddressData.userAddresses[i].pincode %><br>
+															   <%= userAddressData.userAddresses[i].mobileNumber %><br>
+															   <%= userAddressData.userAddresses[i].cityName %>,<%= userAddressData.userAddresses[i].state %><br>
+															   
+															</p>
+															<div class="d-flex">
+																<div class=""><a href="/edit-address?index=<%= i %>">Edit <i class="icon-edit"></i></a></div>
+																<div class="mx-auto"><a onclick="deleteAddress('<%=i %>')"><span class="material-symbols-outlined" style="font-size:19px;margin-top: 5px;margin-left: 120px;cursor: pointer;">close</span></a></div>	
+															</div>
+
+														</div><!-- End .card-body -->
+													</div><!-- End .card-dashboard -->
+												</div><!-- End .col-lg-6 -->
+                                                <% } %>
+
+
+											<% }else{%>
+												<h4>Please Add your Shopping Address</h4>
+											<% } %> 
+								    		
+                                      
+								    		
+								    	</div><!-- End .row -->
+								    </div><!-- .End .tab-pane -->
+
+								   
+								</div>
+	                		</div><!-- End .col-lg-9 -->
+	                	</div><!-- End .row -->
+	                </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <!-- Footer-Start  -->
+        <%- include('./layoutes/user-footer.ejs'); %>
+        <!-- Footer-End  -->
+
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+    <script>
+		 function deleteAddress(index){
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "You won't be able to revert this!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			}).then((result) => {
+					if(result.isConfirmed){
+						$.ajax({
+							url:'/delete-address',
+							data:{
+								index:index,
+							},
+							method:'post',
+							success :(response)=>{
+								if(response.status === 'success'){
+									Swal.fire({
+									position: 'center',
+									icon: 'success',
+									title: 'Your work has been saved',
+									showConfirmButton: false,
+									timer :1000
+									}).then((result)=>{
+										location.reload()
+									})
+									
+								}else{
+									alert('deletion failed')
+								}
+						    }
+						})
+					}else if(result.dismiss === Swal.DismissReason.cancel){
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: 'Deletion cancelled',
+							showConfirmButton: false,
+							timer: 1300
+						})
+					}    
+				})
+		}
+
+		// if(res.data.status === 'success'){
+		// 	alert('oke')
+		// }else{
+		// 	alert('mooji')
+		// }
+
+	</script>
+
+
+
+    <!-- Plugins JS File -->
+    <script src="user/assets/js/jquery.min.js"></script>
+    <script src="user/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="user/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="user/assets/js/jquery.waypoints.min.js"></script>
+    <script src="user/assets/js/superfish.min.js"></script>
+    <script src="user/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS -->
+    <script src="user/assets/js/main.js"></script>
+</body>
+
+</html>

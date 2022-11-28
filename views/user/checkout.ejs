@@ -1,0 +1,470 @@
+<%- include('./layoutes/user-head.ejs'); %>
+<link rel="stylesheet" href="user/assets/css/checkout.css">
+<link rel="stylesheet" href="user/assets/css/style.css">
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<body>
+    <div class="page-wrapper">
+        
+        <!-- start .header -->
+        <%- include('./layoutes/user-nav.ejs'); %>
+        <!-- End .header -->
+
+        <main class="main">
+        	<!-- <div class="page-header text-center" style="background-image: url('user/assets/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">Checkout<span>Shop</span></h1>
+        		</div>
+        	</div> -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="checkout">
+	                <div class="container">
+                        <!-- Button trigger modal -->
+                        <a class="mb-2 text-primary" data-toggle="modal" data-target="#exampleModalScrollable" style="cursor:pointer;">
+                        Available Coupons
+                        </a>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="card">
+                                      <div class="main">
+                                        <div class="co-img">
+                                          <img
+                                            src="https://i.pinimg.com/originals/c7/84/67/c78467db9ff497393cb548a48f02d451.png"
+                                            alt=""
+                                          />
+                                        </div>
+                                        <div class="vertical"></div>
+                                        <div class="content">
+                                          <h2>Mcdonalds</h2>
+                                          <h1>10% <span>Coupon</span></h1>
+                                          <p>Valid till 30 April 2021</p>
+                                        </div>
+                                      </div>
+                                      <div class="copy-button">
+                                        <input id="copyvalue" type="text" readonly value="GOFREE" />
+                                        <button onclick="copyIt()" class="copybtn">COPY</button>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a  class="btn btn-light btn-outline-primary-2 btn-rounded" data-dismiss="modal">Close</a>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <p id="CouponError"></p> 
+            			<div class="cart-bottom">
+                            
+                            <div class="cart-discount">
+                                
+                                    <div class="input-group">
+                                        <input type="text" id="code" name="code" class="form-control"  placeholder="coupon code">
+                                        <div class="">
+                                            <button class="btn btn-outline-primary-2" id="cpnBtn" onclick="verifyCoupons()"><i class="icon-long-arrow-right"></i></button>          
+                                        </div>
+                                       
+                                    </div>
+                            </div>
+                            
+                            <!-- end-coupon -->
+
+                            <a href="/cart" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i
+                                    class="icon-refresh"></i></a>
+                        </div><!-- End .cart-bottom -->
+                        
+                        <hr>
+                        <a href="/newaddress?checkout=address" class="btn btn-outline-primary-2">
+                            <span class="btn-text">New Address ?</span>
+                            <span class="btn-hover-text">Add Now</span>
+                        </a>
+                        
+            			<form id="checkout-form" action="" >
+                            
+		                	<div class="row">
+                                
+		                		<div class="col-lg-9">
+                                    <h2 class="checkout-title">Billing Details</h2>
+
+
+                                    <div class="row">
+                            
+                                        <% if (addressData) { %>
+                                        <% for( let i = 0; i < addressData.userAddresses.length; i++ ) { %>
+                                        
+                                         <div class="col-3">
+                                             <div class="radio-buttons">
+                                                 <label class="custom-radio">
+                                                     <input name="index" value="<%= i %>" type="radio" checked/>
+                                                     <span class="radio-btn">
+                                                         <p style="padding-left: 10px; padding-top:5px;"><%= addressData.userAddresses[i].fullName %><br>
+                                                             <%= addressData.userAddresses[i].houseAddress %><br>
+                                                             <%= addressData.userAddresses[i].streetAddress %>,<%= addressData.userAddresses[i].pincode %><br>
+                                                             <%= addressData.userAddresses[i].mobileNumber %><br>
+                                                             <%= addressData.userAddresses[i].cityName %>,<%= addressData.userAddresses[i].state %><br>  
+                                                         </p>
+                                                     </span>
+                                                 </label>
+                                             </div>
+                                         </div>
+                                         <% } %> 
+                                         <% } %>
+                                     </div>
+                                     
+
+		                			<!-- <h2 class="checkout-title">Billing Details</h2>
+
+
+                                        <label>Full Name*</label>
+                                        <input type="text" class="form-control"
+                                                id="address-name"
+                                                name="fullname"
+                                                 >
+                                        <p class=""><span id="name-error" class="text-danger text-center fw-bold"></span></p>	
+		                				
+
+                                        <label>Phone number *</label>
+                                        <input type="text" class="form-control" 
+                                               name="phonenumber"
+                                               id="address-phone"
+                                                >
+                                        <p class=""><span id="phone-error" class="text-danger text-center fw-bold"></span></p>
+
+                                        <label>Pincode *</label>
+		        							<input type="text" class="form-control" 
+											       name="pincode"
+												   id="address-zip"
+												    >
+									    <p class=""><span id="zip-error" class="text-danger text-center fw-bold"></span></p>
+
+	            						<label>Flat,House no,Building,Company,Apartment</label>
+		            						<input type="text" class="form-control" 
+											       name="housedetails"
+												   id="address-house"
+												   >
+                                            <p class=""><span id="house-error" class="text-danger text-center fw-bold"></span></p>
+		            						<label>Area,Street,Sector,Village</label>
+		            						<input type="text" class="form-control" 
+											       name="streetdetails"
+												   id="address-street"
+												   >
+										    <p class=""><span id="street-error" class="text-danger text-center fw-bold"></span></p>
+
+		            						<label>Landmark</label>
+		            						<input type="text" class="form-control mb-2" placeholder="optional" name="landmark">
+
+	            						<div class="row">
+		                					<div class="col-sm-6">
+		                						<label>Town/City</label>
+		            						    <input type="text" class="form-control" 
+											       name="city"
+												   id="address-city"
+												   >
+											    <p class=""><span id="city-error" class="text-danger text-center fw-bold"></span></p>
+		                					</div>
+
+		                					<div class="col-sm-6">
+                                                <label>State</label>
+                                                <input type="text" class="form-control" 
+                                                       name="state"
+                                                       id="address-state"
+                                                       >
+                                                <p class=""><span id="state-error" class="text-danger text-center fw-bold"></span></p>
+		                					</div>
+		                				</div>
+	        						
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input" id="checkout-diff-address">
+											<label class="custom-control-label" for="checkout-diff-address">Ship to a different address?</label>
+										</div> -->
+		                		</div><!-- End .col-lg-9 -->
+                                
+		                		<aside class="col-lg-3">
+		                			<div class="summary">
+		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+
+		                				<table class="table table-summary">
+		                					<thead>
+		                						<tr>
+		                							<th>Product</th>
+		                							<th>Total</th>
+		                						</tr>
+		                					</thead>
+
+		                					<tbody>
+		                						
+		                						<tr>
+		                							<td>Shipping:</td>
+		                							<td>Free shipping</td>
+		                						</tr>
+
+                                                <tr class="summary-total">
+		                							<td>Discount:</td>
+		                							<td>&#8377;<span id="discountAmount"></span></td>
+		                						</tr>
+
+		                						<tr class="summary-total">
+		                							<td>Total:</td>
+		                							<td>&#8377;<span id="cartAmount"><%=total %></span></td>
+		                						</tr><!-- End .summary-total -->
+
+		                					</tbody>
+		                				</table><!-- End .table table-summary -->
+
+		                				<div class="accordion-summary" id="accordion-payment">
+
+										    <div class="card">
+										        <div class="card-header" id="heading-3">
+										            <h2 class="card-title">
+										                <input value="COD" name="payment" type="radio" class="collapsed"  role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
+										                    Cash on delivery
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
+										            <div class="card-body">Quisque volutpat mattis eros. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. 
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+ 
+
+										    <div class="card mt-1">
+										        <div class="card-header" id="heading-5">
+										            <h2 class="card-title">
+										                <input value="online" name="payment" type="radio" class="collapsed" role="button" data-toggle="collapse" href="#collapse-5" aria-expanded="false" aria-controls="collapse-5">
+										                    Online Payment
+										                    <img src="user/assets/images/payments-summary.png" alt="payments cards">
+										                </input>
+										            </h2>
+										        </div><!-- End .card-header -->
+										        <div id="collapse-5" class="collapse" aria-labelledby="heading-5" data-parent="#accordion-payment">
+										            <div class="card-body"> Donec nec justo eget felis facilisis fermentum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Lorem ipsum dolor sit ame.
+										            </div><!-- End .card-body -->
+										        </div><!-- End .collapse -->
+										    </div><!-- End .card -->
+										</div><!-- End .accordion -->
+
+		                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+		                					<span class="btn-text">Place Order</span>
+		                					<span class="btn-hover-text">Proceed to Checkout</span>
+		                				</button>
+		                			</div><!-- End .summary -->
+		                		</aside><!-- End .col-lg-3 -->
+		                	</div><!-- End .row -->
+            			</form>
+	                </div><!-- End .container -->
+                </div><!-- End .checkout -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <!-- Footer-Start  -->
+        <%- include('./layoutes/user-footer.ejs'); %>
+        <!-- Footer-End  -->
+
+
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
+
+    <div class="mobile-menu-container">
+        <div class="mobile-menu-wrapper">
+            <span class="mobile-menu-close"><i class="icon-close"></i></span>
+
+            <form action="#" method="get" class="mobile-search">
+                <label for="mobile-search" class="sr-only">Search</label>
+                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
+                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+            </form>
+            
+            <nav class="mobile-nav">
+                <ul class="mobile-menu">
+                    <li class="active">
+                        <a href="/">Home</a>
+
+                        
+                    </li>
+                    <li>
+                        <a href="/shop">Shop</a>
+                        
+                    </li>
+                    <li>
+                        <a href="" class="sf-with-ul">Product</a>
+                        
+                    </li>
+                    <li>
+                        <a href="#">Pages</a>
+                        
+                    </li>
+                   
+                </ul>
+            </nav><!-- End .mobile-nav -->
+
+            <div class="social-icons">
+                <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
+                <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
+            </div><!-- End .social-icons -->
+        </div><!-- End .mobile-menu-wrapper -->
+    </div><!-- End .mobile-menu-container -->
+
+    <!-- Sign in / Register Modal -->
+   
+
+
+
+    <!-- Plugins JS File -->
+    <script src="user/assets/js/jquery.min.js"></script>
+    <script src="user/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="user/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="user/assets/js/jquery.waypoints.min.js"></script>
+    <script src="user/assets/js/superfish.min.js"></script>
+    <script src="user/assets/js/owl.carousel.min.js"></script>
+    <!-- Main JS File -->
+    <script src="user/assets/js/main.js"></script>
+    <script src="user/assets/js/coupon.js"></script>
+
+</body>
+<script>
+    $("#checkout-form").submit((e)=>{
+        e.preventDefault()
+        const discount = document.getElementById('discountAmount').innerHTML
+        console.log(discount,"here")
+        $.ajax({
+            url:'/place-order/?discount='+discount,
+            method:'post',
+            data:$('#checkout-form').serialize(),
+            success:(response) =>{
+                if(response.status){
+                    setTimeout(() => {
+                        window.location.href = '/ordersuccess'
+                        console.log(response)
+                    }, 1000)
+                }else{
+                    razorpayPayment(response)
+                }
+            }
+        })
+    })
+</script>
+
+<script>
+    function razorpayPayment(order){
+        var options = {
+            "key": "rzp_test_FghXHPtMaLQ3Kk", // Enter the Key ID generated from the Dashboard
+            "amount": order.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Molla ",
+            "description": "Test Transaction",
+            "image": "https://example.com/your_logo",
+            "order_id":order.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9999999999"
+            },
+            "notes": {
+                "address": "Razorpay Corporate Office"
+            },
+            "theme": {
+                "color": "#3399cc"
+            },
+            "handler": function (response) {
+                                        
+                verifyPayment(response, order.order);
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open()
+    }
+</script>
+<script>
+    function verifyPayment(payment,order){
+        $.ajax({
+            url:'/verify-payment',
+            data:{
+                payment,
+                order
+            },
+            method:'post',
+            success:(response)=>{
+                console.log(response);
+                if(response.status){
+                    window.location.href = '/ordersuccess'
+                }else{
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Payment failed',
+                        showConfirmButton: false,
+                        timer: 1300
+                    })
+                    // alert('Your Product Deleted from Cart')
+                    setTimeout(() => {
+                        location.reload()
+                    }, 1200);
+                    window.location.href = '/ordersuccess'
+                }
+            }
+        })
+    }
+</script>
+
+<script>
+ function verifyCoupons(){
+    const code = document.getElementById("code").value;
+
+    // console.log($('#cartAmount').html());
+
+    $.ajax({
+        url:'/verify-coupon',
+        data:{
+            code:code,
+            cartAmount:$('#cartAmount').html()
+        },
+        method:'post',
+        success:(response)=>{
+            if(response.status == true){
+                document.getElementById("CouponError").style.color = "green";
+                document.getElementById("CouponError").innerHTML = "Hey ! Coupon Applied";
+                document.getElementById("discountAmount").innerHTML = response.cuted;
+                document.getElementById("cartAmount").innerHTML = response.discounted;
+                document.getElementById('cpnBtn').disabled = true
+
+            }else{
+                document.getElementById("CouponError").style.color = "red";
+                document.getElementById("CouponError").innerHTML = response.couponMsg;
+            }
+        }
+    })
+ }
+         
+</script> 
+
+
+<!-- molla/checkout.html  22 Nov 2019 09:55:06 GMT -->
+</html>

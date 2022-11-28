@@ -1,0 +1,156 @@
+<%- include('./layoutes/user-head.ejs'); %>
+
+<body>
+    <div class="page-wrapper">
+
+        <!-- start .header -->
+        <%- include('./layoutes/user-nav.ejs'); %>
+        <!-- End .header -->
+
+        <main class="main">
+        	<div class="page-header text-center" style="background-image: url('user/assets/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">My Account<span>Shop</span></h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="dashboard">
+	                <div class="container">
+	                	<div class="row">
+	                		<aside class="col-md-4 col-lg-3">
+	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                    <li class="nav-item">
+								        <a class="nav-link "  href="/account" >Dashboard</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+								    </li>
+								    
+								    <li class="nav-item">
+								        <a class="nav-link show active" id="tab-address-link" data-toggle="tab" href="/addresss" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" href="/profile">Account Details</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" href="/logout">Sign Out</a>
+								    </li>
+								</ul>
+	                		</aside><!-- End .col-lg-3 -->
+
+	                		<div class="col-md-8 col-lg-9">
+	                			<div class="tab-content">
+								    <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+								    	<form  onsubmit="return validateForm()" action="/newaddress" method="post">
+			                				
+
+		            						<label>Full Name*</label>
+		            						<input type="text" class="form-control"
+											        id="address-name"
+											        name="fullname"
+													onkeyup="validateName()" >
+											<p class=""><span id="name-error" class="text-danger text-center fw-bold"></span></p>		
+		            						<small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
+
+                                            <label>Phone number *</label>
+		        							<input type="text" class="form-control" 
+											       name="phonenumber"
+												   id="address-phone"
+												   onkeyup="validatePhone()" >
+										    <p class=""><span id="phone-error" class="text-danger text-center fw-bold"></span></p>
+
+		                					<label>Pincode *</label>
+		        							<input type="text" class="form-control" 
+											       name="pincode"
+												   id="address-zip"
+												   onkeyup="validateZip()" >
+											<p class=""><span id="zip-error" class="text-danger text-center fw-bold"></span></p>
+
+		            						<label>Flat,House no,Building,Company,Apartment</label>
+		            						<input type="text" class="form-control" 
+											       name="housedetails"
+												   id="address-house"
+												   onkeyup="validateHouse()">
+                                            <p class=""><span id="house-error" class="text-danger text-center fw-bold"></span></p>
+		            						<label>Area,Street,Sector,Village</label>
+		            						<input type="text" class="form-control" 
+											       name="streetdetails"
+												   id="address-street"
+												   onkeyup="validateStreet()">
+										    <p class=""><span id="street-error" class="text-danger text-center fw-bold"></span></p>
+
+		            						<label>Landmark</label>
+		            						<input type="text" class="form-control mb-2" placeholder="optional" name="landmark">
+
+                                            <label>Town/City</label>
+		            						<input type="text" class="form-control" 
+											       name="city"
+												   id="address-city"
+												   onkeyup="validateCity()">
+											<p class=""><span id="city-error" class="text-danger text-center fw-bold"></span></p>
+
+                                            <label>State</label>
+		            						<input type="text" class="form-control" 
+											       name="state"
+												   id="address-state"
+												   onkeyup="validateState()">
+                                            <p class=""><span id="state-error" class="text-danger text-center fw-bold"></span></p>
+
+		                					<button type="submit" class="btn btn-outline-primary-2" onclick="return validateForm()">
+			                					<span>Add Address</span>
+			            						<i class="icon-long-arrow-right"></i>
+			                				</button>
+											<p class=""><span id="submit-error" class="text-danger text-center fw-bold"></span></p>
+			                			</form>
+								    </div><!-- .End .tab-pane -->
+ 
+								    
+								    
+
+								    
+								</div>
+	                		</div><!-- End .col-lg-9 -->
+	                	</div><!-- End .row -->
+	                </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <!-- Footer-Start  -->
+        <%- include('./layoutes/user-footer.ejs'); %>
+        <!-- Footer-End  -->
+
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+  
+
+    
+
+
+
+    <!-- Plugins JS File -->
+    <script src="user/assets/js/jquery.min.js"></script>
+    <script src="user/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="user/assets/js/jquery.hoverIntent.min.js"></script>
+    <script src="user/assets/js/jquery.waypoints.min.js"></script>
+    <script src="user/assets/js/superfish.min.js"></script>
+    <script src="user/assets/js/owl.carousel.min.js"></script>
+	<script src="user/assets/js/address-validation.js"></script>
+    <!-- Main JS File -->
+    <script src="user/assets/js/main.js"></script>
+</body>
+
+
+<!-- molla/dashboard.html  22 Nov 2019 10:03:13 GMT -->
+</html>
