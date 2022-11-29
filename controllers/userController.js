@@ -110,7 +110,7 @@ exports.renderOtpPage = (req, res) => {
     res.render('user/otp', { token: "" })
 }
 //very OTP
-exports.verifyOtp = async (req, res) => {
+exports.verifyOtp = async (req, res ,next) => {
 
     try {
         const otp = req.body.otp
@@ -152,14 +152,14 @@ exports.verifyOtp = async (req, res) => {
             })
 
     } catch (error) {
-        
+        next(error)
     }
 
 
 }
 
 //sign-in
-exports.userSignin = async (req, res) => {
+exports.userSignin = async (req, res ,next) => {
     try {
         const { email, password } = req.body
         if (email && password) {
@@ -189,12 +189,12 @@ exports.userSignin = async (req, res) => {
             res.render('user/login', { token: "", emailpasserr: "", passerr: "", allerr: "All feilds are required", banerr: "" });
         }
     } catch (err) {
-        console.log(err)
+        next(error)
     }
 }
 //View-Products
 
-exports.view_product = async (req, res) => {
+exports.view_product = async (req, res,next) => {
     try {
         const token = req.cookies.jwt
         const decoded = jwt.verify(token, process.env.JWT_KEY);
@@ -203,19 +203,20 @@ exports.view_product = async (req, res) => {
         const prodDetails = await productModel.findById(prodId)
         const cartData = await cartModel.findOne({userId}).populate('cartProducts.productId')
         const wishlist = await wishlistModel.findOne({userId}).populate('products.item')
+        const categoryFilter = await categoryModel.find({})
+        res.locals.categoryFilter = categoryFilter
         res.locals.cartData = cartData
         res.locals.userWish = wishlist
-        console.log(prodDetails)
         res.render('user/product-view', { token: "", emailerr: "", passerr: "", allerr: "", prodDetails })
     } catch (error) {
-        // next(error)
+        next(error)
     }
 
 }
 //Product List //
 
 
-exports.productsList = async (req, res) => {
+exports.productsList = async (req, res ,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -275,13 +276,13 @@ exports.productsList = async (req, res) => {
             res.render('user/shop-list', { token:"", productsLists , categoryFilter});
         }
     } catch (error) {
-        console.log(error);
+       next(error)
     }
 
 
 }
 
-exports.filterShop = async(req,res) => {
+exports.filterShop = async(req,res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -316,7 +317,7 @@ exports.filterShop = async(req,res) => {
             res.render('user/shop-list', { token, productsLists });
         }
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 }
 
@@ -330,7 +331,7 @@ async function getTotal(token) {
     return total = cartData.cartProducts.reduce((acc, cur) => (acc + cur.productId.price * cur.quantity), 0)
 }
 
-exports.renderCartPage = async (req, res) => {
+exports.renderCartPage = async (req, res,next) => {
     try {
         const cartId = req.query.id
         const token = req.cookies.jwt
@@ -367,12 +368,12 @@ exports.renderCartPage = async (req, res) => {
         }
         
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
-exports.addItemToCart = async (req, res) => {
+exports.addItemToCart = async (req, res ,next) => {
     try {
         const token = req.cookies.jwt
         const { productId } = req.body
@@ -426,14 +427,14 @@ exports.addItemToCart = async (req, res) => {
             res.json(false)
         }
     } catch (error) {
-    
+       next(error)
     }
     
 }
 
 //Change Cart Quantity 
 
-module.exports.change_Quantities = async (req, res) => {
+module.exports.change_Quantities = async (req, res ,next) => {
     try {
         const token = req.cookies.jwt
         const { cart, product, count, Quantity } = req.body
@@ -458,12 +459,12 @@ module.exports.change_Quantities = async (req, res) => {
         }
 
     } catch (error) {
-    
+       next(error)
     }  
     
 }
 
-module.exports.deleteCartProduct = async (req, res) => {
+module.exports.deleteCartProduct = async (req, res,next) => {
     try {
         const { cartId, dltproductId } = req.body
         // const cartDatas = await cartModel.findById(cartId)
@@ -480,13 +481,13 @@ module.exports.deleteCartProduct = async (req, res) => {
             res.send(err)
         })
     } catch (error) {
-        
+        next(error)
     }
   
 
 }
 //Wish List Mangement
-exports.renderWishList = async (req, res) => {
+exports.renderWishList = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -508,13 +509,13 @@ exports.renderWishList = async (req, res) => {
         res.send('<script>alert("please login first"); window.location.href = "/login";</script>')
     }
     } catch (error) {
-        
+        next(error)
     }
     
 
 }
 
-exports.addToWishlist = async (req, res) => {
+exports.addToWishlist = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -559,13 +560,13 @@ exports.addToWishlist = async (req, res) => {
             res.json(false)
         }
     } catch (error) {
-        
+        next(error)
     }
     
 }
 
 //Delete wish product
-module.exports.removeWishProduct = async (req, res) => {
+module.exports.removeWishProduct = async (req, res,next) => {
     try {
         const { wishlistId, productId } = req.body
 
@@ -577,14 +578,14 @@ module.exports.removeWishProduct = async (req, res) => {
             res.json(false)
         })
     } catch (error) {
-        
+        next(error)
     }
 
 
 }
 
 //Profile And Address Management//
-exports.renderMyAccountPage = async (req, res) => {
+exports.renderMyAccountPage = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -601,13 +602,13 @@ exports.renderMyAccountPage = async (req, res) => {
         res.locals.userWish = wishlist
         res.render('user/account', { userEmail })
     } catch (error) {
-        
+        next(error)
     }
   
 }
 
 
-exports.renderAddressPage = async (req, res) => {
+exports.renderAddressPage = async (req, res ,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -625,14 +626,14 @@ exports.renderAddressPage = async (req, res) => {
         const userAddressData = await addressModel.findOne({ userId: userId }).populate('userId')
         res.render('user/address', { userEmail, userAddressData })
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
 //Add Address 
 
-exports.renderAdd_address = async (req, res) => {
+exports.renderAdd_address = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -649,12 +650,12 @@ exports.renderAdd_address = async (req, res) => {
         res.locals.userWish = wishlist
         res.render('user/addAddress', { userEmail })
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
-exports.addAdress = async (req, res) => {
+exports.addAdress = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -697,17 +698,17 @@ exports.addAdress = async (req, res) => {
             }
 
         } else {
-            res.send('login first')
+            res.send('<script>alert("please login first"); window.location.href = "/login";</script>')
         }
     } catch (error) {
-        
+        next(error)
     }
     
 }
 
 //Edit Address
 
-exports.renderEditAddress = async (req, res) => {
+exports.renderEditAddress = async (req, res,next) => {
 
     try {
         const addressIndex = req.query.index
@@ -731,12 +732,12 @@ exports.renderEditAddress = async (req, res) => {
     
         res.render('user/editAddress', { userEmail, userAddress })
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
-exports.editAddress = async (req, res) => {
+exports.editAddress = async (req, res,next) => {
 
     try {
         const editData = { ...req.body }
@@ -753,13 +754,13 @@ exports.editAddress = async (req, res) => {
             res.redirect('/address')
         }
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
 //Delete Address 
-module.exports.deleteUserAddress = async (req, res) => {
+module.exports.deleteUserAddress = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -776,7 +777,7 @@ module.exports.deleteUserAddress = async (req, res) => {
             status: 'success'
         })
     } catch (error) {
-        
+        next(error)
     }
 
 
@@ -805,15 +806,14 @@ exports.renderEditProfilePage = async (req, res,next) => {
         res.render('user/editProfile', { userEmail, userData })
 
     } catch (error) {
-        res.send(error)
-        console.log(error);
+        
         next(error)
     }
 
 }
 
 
-exports.editProfile = async (req, res) => {
+exports.editProfile = async (req, res,next) => {
 
     try {
         const profile = { ...req.body }
@@ -852,13 +852,13 @@ exports.editProfile = async (req, res) => {
             res.redirect('/login')
         }
     } catch (error) {
-        res.send(error)
+        next(error)
     }
 
 }
 
 //Order Management //
-exports.userOrders = async (req, res) => {
+exports.userOrders = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -888,7 +888,7 @@ exports.userOrders = async (req, res) => {
             res.send('<script>alert("please login first"); window.location.href = "/login";</script>')
         }
     } catch (error) {
-        
+        next(error)
     }
 
 
@@ -896,7 +896,7 @@ exports.userOrders = async (req, res) => {
 
 //Cancel orders
 
-exports.cancelOrder = async(req,res)=>{
+exports.cancelOrder = async(req,res,next)=>{
     try {
         
         const orderId = req.query.id
@@ -906,7 +906,7 @@ exports.cancelOrder = async(req,res)=>{
         res.redirect('/orders')
         
     } catch (error) {
-        
+        next(error)
     }
     
 }
@@ -914,7 +914,7 @@ exports.cancelOrder = async(req,res)=>{
 
 //Payment Checkout Management//
 
-exports.renderCheckoutPage = async (req, res) => {
+exports.renderCheckoutPage = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -951,13 +951,13 @@ exports.renderCheckoutPage = async (req, res) => {
         } 
 
     } catch (error) {
-        
+        next(error)
     }
 
 
 }
 
-module.exports.placeOrder = async (req, res) => {
+module.exports.placeOrder = async (req, res,next) => {
 
     try {
         const disAmount = req.query.discount
@@ -1017,13 +1017,13 @@ module.exports.placeOrder = async (req, res) => {
         })
 
     } catch (error) {
-        
+        next(error)
     }
 
 
 }
 
-exports.orderSuccess = async (req, res) => {
+exports.orderSuccess = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -1066,12 +1066,12 @@ exports.orderSuccess = async (req, res) => {
         }
 
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
-module.exports.verifyPayment = async (req, res) => {
+module.exports.verifyPayment = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -1102,12 +1102,12 @@ module.exports.verifyPayment = async (req, res) => {
         }
 
     } catch (error) {
-        
+        next(error)
     }
 
 }
 
-module.exports.verifyCoupons = async (req, res) => {
+module.exports.verifyCoupons = async (req, res,next) => {
 
     try {
         const token = req.cookies.jwt
@@ -1185,9 +1185,7 @@ module.exports.verifyCoupons = async (req, res) => {
 
 
     } catch (error) {
-        return res.status(500).send({
-            message: error.message,
-        });
+        next(error)
     }
 
 }

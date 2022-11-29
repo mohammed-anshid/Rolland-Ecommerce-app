@@ -98,19 +98,21 @@ exports.renderDashboard = async (req, res) => {
         { $limit: 9}
 
     ])
-
+    
+    const sales =await orderModel.find({orderStatus:"delivered"}).sort({createdAt: 1})
     res.locals.monCancels = monCancels
     res.locals.userCount = userCount
     res.locals.todaySales = todaySales
     res.locals.yearSales = yearSales
     res.locals.todayOrders = todayOrders
+    res.locals.sales = sales
 
     if (token) {
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         const adminId = decoded.adminId
         const admin = await adminModel.findById(adminId)
         const adminEmail = admin.email
-        res.render('admin/dashboard', { token, adminEmail, salesReports,monthlySales })
+        res.render('admin/dashboard', { token, adminEmail, salesReports,monthlySales,moment: moment })
     } else {
         res.redirect('/admin')
     }
@@ -224,7 +226,7 @@ exports.renderAddProduct = async (req, res) => {
 
 //Add-products
 
-exports.addProduct = async (req, res) => {
+exports.addProduct = async (req, res,next) => {
     const files = req.files
     // console.log(files)
     const { productname, description, category, stock, price, discount, tags } = req.body
@@ -259,10 +261,7 @@ exports.addProduct = async (req, res) => {
         res.redirect('/admin/products')
 
     } catch (error) {
-        return res.status(500).send({
-            message: error.message,
-            //   console.log(err);
-        });
+       next(error)
     }
 
 }
@@ -279,70 +278,80 @@ exports.renderEditproduct = async (req, res) => {
 }
 
 //Soft Delete Product
-exports.deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res,next) => {
+    try {
+        const prodId = req.query.id
+        await productModel.findByIdAndUpdate(prodId, {
+            $set: { isHide: true }
+        })
+    
+        res.redirect('/admin/products')
+    } catch (error) {
+        next(error)
+    }
 
-    const prodId = req.query.id
-    await productModel.findByIdAndUpdate(prodId, {
-        $set: { isHide: true }
-    })
-
-    res.redirect('/admin/products')
 }
 
-exports.editProduct = async (req, res) => {
-    const { editProductname, editDescription, editPrice, editDiscount, editStock, editTags, editCategory } = req.body
-    const { id } = req.query
-    const imgFiles = req.files
-    console.log(imgFiles);
+exports.editProduct = async (req, res,next) => {
+    try {
 
-    //
-    if (imgFiles[0]) {
-        let prod = await productModel.findById(id)
+        const { editProductname, editDescription, editPrice, editDiscount, editStock, editTags, editCategory } = req.body
+        const { id } = req.query
+        const imgFiles = req.files
+        console.log(imgFiles);
+
+        //
+        if (imgFiles[0]) {
+            let prod = await productModel.findById(id)
 
 
-        for (var i = 0; i < prod.productimage.length; i++) {
-            await cloudinary.uploader.destroy(prod.productimage[i].public_id)
-        }
+            for (var i = 0; i < prod.productimage.length; i++) {
+                await cloudinary.uploader.destroy(prod.productimage[i].public_id)
+            }
 
-        let editedArr = []
-        for (var i = 0; i < imgFiles.length; i++) {
-            const results = await cloudinary.uploader.upload(req.files[i].path)
+            let editedArr = []
+            for (var i = 0; i < imgFiles.length; i++) {
+                const results = await cloudinary.uploader.upload(req.files[i].path)
 
-            editedArr.push({
-                image_url: results.secure_url,
-                public_id: results.public_id
+                editedArr.push({
+                    image_url: results.secure_url,
+                    public_id: results.public_id
+                })
+            }
+            await productModel.findByIdAndUpdate(id, {
+                productname: editProductname,
+                description: editDescription,
+                category: editCategory,
+                stock: editStock,
+                price: editPrice,
+                discount: editDiscount,
+                brands: editTags,
+                productimage: editedArr,
+            }).then(() => {
+                res.redirect('/admin/products')
             })
+
+        } else {
+
+
+            await productModel.findByIdAndUpdate(id, {
+                productname: editProductname,
+                description: editDescription,
+                category: editCategory,
+                stock: editStock,
+                price: editPrice,
+                discount: editDiscount,
+                brands: editTags,
+
+            }).then(() => {
+                res.redirect('/admin/products')
+            })
+
         }
-        await productModel.findByIdAndUpdate(id, {
-            productname: editProductname,
-            description: editDescription,
-            category: editCategory,
-            stock: editStock,
-            price: editPrice,
-            discount: editDiscount,
-            brands: editTags,
-            productimage: editedArr,
-        }).then(() => {
-            res.redirect('/admin/products')
-        })
-
-    } else {
-
-
-        await productModel.findByIdAndUpdate(id, {
-            productname: editProductname,
-            description: editDescription,
-            category: editCategory,
-            stock: editStock,
-            price: editPrice,
-            discount: editDiscount,
-            brands: editTags,
-
-        }).then(() => {
-            res.redirect('/admin/products')
-        })
-
+    } catch (error) {
+        next(error)
     }
+    
 
 }
 
@@ -360,29 +369,35 @@ exports.renderBannerForm = (req, res) => {
     res.render('admin/addbanners')
 }
 
-exports.addbannerDetails = async (req, res) => {
-    const file = req.file
-    const data = { ...req.body }
-    console.log(req.file);
+exports.addbannerDetails = async (req, res,next) => {
+    try {
+        const file = req.file
+        const data = { ...req.body }
+        console.log(req.file);
+    
+    
+        const bannerImage = await cloudinary.uploader.upload(req.file.path)
+        //  console.log(bannerImage);
+        let bannerArr = []
+        bannerArr.push({
+            image_url: bannerImage.secure_url,
+            public_id: bannerImage.public_id
+        })
+    
+        console.log(data.prodname);
+        await bannerModel.create({
+            prodname: data.prodname,
+            offername: data.offername,
+            offerprice: data.offerprice,
+            oldprice: data.actualprice,
+            bannerimages: bannerArr,
+        })
+        res.redirect('/admin/banner')
+        
+    } catch (error) {
+        next(error)
+    }
 
-
-    const bannerImage = await cloudinary.uploader.upload(req.file.path)
-    //  console.log(bannerImage);
-    let bannerArr = []
-    bannerArr.push({
-        image_url: bannerImage.secure_url,
-        public_id: bannerImage.public_id
-    })
-
-    console.log(data.prodname);
-    await bannerModel.create({
-        prodname: data.prodname,
-        offername: data.offername,
-        offerprice: data.offerprice,
-        oldprice: data.actualprice,
-        bannerimages: bannerArr,
-    })
-    res.redirect('/admin/banner')
 
 
 }
@@ -393,45 +408,55 @@ exports.renderEditBannerDetails = async (req, res) => {
     res.render('admin/editBanner', { bannerInfos })
 }
 
-exports.editBannerDetails = async (req, res) => {
-    const file = req.file
-    const data = { ...req.body }
-    const BannerId = req.query.id
-    console.log(data);
-
-    if (file) {
-        const BannerDls = await bannerModel.findById(BannerId)
-        await cloudinary.uploader.destroy(BannerDls.bannerimages[0].public_id)
+exports.editBannerDetails = async (req, res,next) => {
+    try {
+        const file = req.file
+        const data = { ...req.body }
+        const BannerId = req.query.id
+        console.log(data);
+    
+        if (file) {
+            const BannerDls = await bannerModel.findById(BannerId)
+            await cloudinary.uploader.destroy(BannerDls.bannerimages[0].public_id)
+        }
+    
+        const updatedBanner = await cloudinary.uploader.upload(req.file.path)
+        let updatedArr = []
+        updatedArr.push({
+            image_url: updatedBanner.secure_url,
+            public_id: updatedBanner.public_id
+        })
+    
+        await bannerModel.findByIdAndUpdate(BannerId, {
+            prodname: data.prodname,
+            offername: data.offername,
+            offerprice: data.offerprice,
+            oldprice: data.actualname,
+            bannerimages: updatedArr
+        })
+        res.redirect('/admin/banner')
+    } catch (error) {
+        next(error)
     }
 
-    const updatedBanner = await cloudinary.uploader.upload(req.file.path)
-    let updatedArr = []
-    updatedArr.push({
-        image_url: updatedBanner.secure_url,
-        public_id: updatedBanner.public_id
-    })
-
-    await bannerModel.findByIdAndUpdate(BannerId, {
-        prodname: data.prodname,
-        offername: data.offername,
-        offerprice: data.offerprice,
-        oldprice: data.actualname,
-        bannerimages: updatedArr
-    })
-    res.redirect('/admin/banner')
 }
 
 //Delete Banner
-exports.deleteBannerDetails = async (req, res) => {
-    const dltBannerId = req.query.id
-    const dltBannerdetails = await bannerModel.findById(dltBannerId)
-    await cloudinary.uploader.destroy(dltBannerdetails.bannerimages[0].public_id)
-    await bannerModel.findByIdAndRemove(dltBannerId, {})
-    res.redirect('/admin/banner')
+exports.deleteBannerDetails = async (req, res,next) => {
+    try {
+        const dltBannerId = req.query.id
+        const dltBannerdetails = await bannerModel.findById(dltBannerId)
+        await cloudinary.uploader.destroy(dltBannerdetails.bannerimages[0].public_id)
+        await bannerModel.findByIdAndRemove(dltBannerId, {})
+        res.redirect('/admin/banner')
+    } catch (error) {
+        next(error)
+    }
+
 }
 
 //Order Management
-exports.orderList = async (req, res) => {
+exports.orderList = async (req, res,next) => {
     try {
 
         const orders = await orderModel.find({}).populate('userId').populate({
@@ -444,12 +469,12 @@ exports.orderList = async (req, res) => {
 
         res.render('admin/orders', { orders, moment: moment })
     } catch (error) {
-
+        next(error)
     }
 
 }
 
-exports.orderSummary = async (req, res) => {
+exports.orderSummary = async (req, res,next) => {
 
     try {
         const orderId = req.query.id
@@ -463,13 +488,13 @@ exports.orderSummary = async (req, res) => {
 
         res.render('admin/order-summary', { orders, moment: moment })
     } catch (error) {
-
+        next(error)
     }
 
 }
 
-module.exports.changeOrder_status = async (req, res) => {
-    console.log(req.body)
+module.exports.changeOrder_status = async (req, res,next) => {
+    
     try {
         const data = { ...req.body }
         console.log(data);
@@ -480,11 +505,11 @@ module.exports.changeOrder_status = async (req, res) => {
         })
 
     } catch (error) {
-
+        next(error)
     }
 }
 
-exports.renderCouponList = async (req, res) => {
+exports.renderCouponList = async (req, res,next) => {
     try {
 
         const couponsData = await couponModel.find({})
@@ -493,14 +518,12 @@ exports.renderCouponList = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).send({
-            message: error.message,
-        });
+        next(error)
     }
 
 }
 
-exports.addCoupons = async (req, res) => {
+exports.addCoupons = async (req, res,next) => {
 
     try {
         console.log(req.body)
@@ -520,10 +543,7 @@ exports.addCoupons = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).send({
-            message: error.message,
-            //   console.log(err);
-        });
+        next(error)
     }
 
 

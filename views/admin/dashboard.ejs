@@ -379,10 +379,10 @@
             <div class="card-header pb-0">
               <div class="row">
                 <div class="col-lg-6 col-7">
-                  <h6>Projects</h6>
+                  <h6>Sales</h6>
                   <p class="text-sm mb-0">
                     <i class="fa fa-check text-info" aria-hidden="true"></i>
-                    <span class="font-weight-bold ms-1">30 done</span> this month
+                    <!-- <span class="font-weight-bold ms-1">30 done</span> this month -->
                   </p>
                 </div>
                 <div class="col-lg-6 col-5 my-auto text-end">
@@ -391,9 +391,8 @@
                       <i class="fa fa-ellipsis-v text-secondary"></i>
                     </a>
                     <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
-                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                      <li><a class="dropdown-item border-radius-md" onclick="ExportToExcel('xlsx')">Download in Exel</a></li>
+                      <li><a class="dropdown-item border-radius-md" onclick="Export()">Download in PDF</a></li>
                     </ul>
                   </div>
                 </div>
@@ -401,249 +400,47 @@
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive">
-                <table class="table align-items-center mb-0">
+
+                <table class="table align-items-center mb-0" id="tbl_exporttable_to_xls">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Companies</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Members</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completion</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">payment</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
                     </tr>
                   </thead>
+
+                  <% for( let i = 0; i < sales.length; i++ ) { %>
                   <tbody>
                     <tr>
                       <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Material XD Version</h6>
-                          </div>
-                        </div>
+                        <span class="text-xs font-weight-bold"><%= moment(sales[i].createdAt).format('Do MMMM, YYYY'); %></span>
                       </td>
                       <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img src="/admin/img/team-1.jpg" alt="team1">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img src="/admin/img/team-2.jpg" alt="team2">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                            <img src="/admin/img/team-3.jpg" alt="team3">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img src="/admin/img/team-4.jpg" alt="team4">
-                          </a>
-                        </div>
+                        <span class="text-xs font-weight-bold"><%=sales[i].address.fullName%> </span>
                       </td>
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $14,000 </span>
+                        <span class="text-xs font-weight-bold"><%=sales[i].orderStatus%></span>
                       </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">60%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-atlassian.svg" class="avatar avatar-sm me-3" alt="atlassian">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Add Progress Track</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img src="/admin/img/team-2.jpg" alt="team5">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img src="/admin/img/team-4.jpg" alt="team6">
-                          </a>
-                        </div>
-                      </td>
+
                       <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $3,000 </span>
+                        <span class="text-xs font-weight-bold"><%=sales[i].paymentMethod%></span>
+                        
                       </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">10%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-10" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
+
+                      <td class="align-middle text-center text-sm">&#8377;
+                        <span class="text-xs font-weight-bold"><%=sales[i].totalAmount%></span>
+                        
                       </td>
+
                     </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-slack.svg" class="avatar avatar-sm me-3" alt="team7">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Fix Platform Errors</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img src="/admin/img/team-3.jpg" alt="team8">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img src="/admin/img/team-1.jpg" alt="team9">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> Not set </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">100%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-spotify.svg" class="avatar avatar-sm me-3" alt="spotify">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Launch our Mobile App</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img src="/admin/img/team-4.jpg" alt="user1">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                            <img src="/admin/img/team-3.jpg" alt="user2">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                            <img src="/admin/img/team-4.jpg" alt="user3">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img src="/admin/img/team-1.jpg" alt="user4">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $20,500 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">100%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-jira.svg" class="avatar avatar-sm me-3" alt="jira">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Add the New Pricing Page</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img src="/admin/img/team-4.jpg" alt="user5">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $500 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">25%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="25"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div>
-                            <img src="/admin/img/small-logos/logo-invision.svg" class="avatar avatar-sm me-3" alt="invision">
-                          </div>
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">Redesign New Online Shop</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                            <img src="/admin/img/team-1.jpg" alt="user6">
-                          </a>
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                            <img src="/admin/img/team-4.jpg" alt="user7">
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> $2,000 </span>
-                      </td>
-                      <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                          <div class="progress-info">
-                            <div class="progress-percentage">
-                              <span class="text-xs font-weight-bold">40%</span>
-                            </div>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="40"></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                    
                   </tbody>
+                   <% } %>
                 </table>
+
               </div>
             </div>
           </div>
@@ -831,6 +628,39 @@
   <script src="/admin/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="/admin/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="/admin/js/plugins/chartjs.min.js"></script>
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script type="text/javascript">
+        function Export() {
+            html2canvas(document.getElementById('tbl_exporttable_to_xls'), {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Sales-Report"+Date.now()+".pdf");
+                }
+            });
+        }
+  </script>
+
+  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+  <script>
+    function ExportToExcel(type, fn, dl) {
+       var elt = document.getElementById('tbl_exporttable_to_xls');
+       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+       return dl ?
+         XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+         XLSX.writeFile(wb, fn || ('MySheetName.' + (type || 'xlsx')));
+    }
+  </script>
+
+  
 
   <% if (salesReports ) { %>
   <script>
