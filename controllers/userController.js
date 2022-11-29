@@ -203,8 +203,8 @@ exports.view_product = async (req, res,next) => {
         const prodDetails = await productModel.findById(prodId)
         const cartData = await cartModel.findOne({userId}).populate('cartProducts.productId')
         const wishlist = await wishlistModel.findOne({userId}).populate('products.item')
-        const categoryFilter = await categoryModel.find({})
-        
+        let categoryFilter = await categoryModel.find({})
+        console.log(categoryFilter);
         res.locals.cartData = cartData
         res.locals.userWish = wishlist
         res.render('user/product-view', { token: "", emailerr: "", passerr: "", allerr: "", prodDetails ,categoryFilter})
