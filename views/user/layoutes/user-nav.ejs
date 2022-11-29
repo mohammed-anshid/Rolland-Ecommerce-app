@@ -220,7 +220,7 @@
                     <div class="dropdown-menu">
                         <nav class="side-nav">
                             <ul class="menu-vertical sf-arrows">
-                            <% if (categoryFilter != null) { %>
+                            <% if (categoryFilter) { %>
                              <% for( let i = 0; i < categoryFilter.length; i++ ) { %>
 
                                <li class="item-lead"><a href="/filter-shop?category=<%=categoryFilter[i].category_name%> "><%=categoryFilter[i].category_name%> </a></li>

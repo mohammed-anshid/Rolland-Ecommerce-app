@@ -204,10 +204,10 @@ exports.view_product = async (req, res,next) => {
         const cartData = await cartModel.findOne({userId}).populate('cartProducts.productId')
         const wishlist = await wishlistModel.findOne({userId}).populate('products.item')
         const categoryFilter = await categoryModel.find({})
-        res.locals.categoryFilter = categoryFilter
+        
         res.locals.cartData = cartData
         res.locals.userWish = wishlist
-        res.render('user/product-view', { token: "", emailerr: "", passerr: "", allerr: "", prodDetails })
+        res.render('user/product-view', { token: "", emailerr: "", passerr: "", allerr: "", prodDetails ,categoryFilter})
     } catch (error) {
         next(error)
     }
@@ -224,7 +224,7 @@ exports.productsList = async (req, res ,next) => {
         let categoryFilter = await categoryModel.find({})
         const filterBrands = req.query.brands
         const filterCategory = req.query.category
-        console.log(filterCategory,"------------------");
+
 
      if(filterBrands){
         
